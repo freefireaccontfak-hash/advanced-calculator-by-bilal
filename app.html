@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Advanced CALCULATOR</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    button{
+      padding: 15px 20px;
+      margin-top: 10px;
+      margin-left: 10px;
+      border: 1px solid black;
+      outline: none;
+      cursor: pointer;
+      border-radius: 25px;
+      box-shadow: -2px -2px 15px black;
+      font-size: 14px;
+      font-family:'Orbitron', sans-serif;
+    }
+    button:hover{
+      background-color: lightgray;
+    }
+    .p{
+      background-color: orange;
+    }
+    .p:hover{
+      background-color: orange;
+    }
+    body{
+      height: 100%;
+      border: 3px solid;
+      margin-top: 100px;
+      margin-left: 10px;
+      box-shadow: 2px 2px 5px black;
+      font-family:'Orbitron', sans-serif;
+      border-radius: 10px;
+    }
+    .u{
+      color: green;
+    }
+    input{
+      padding: 18px;
+      border: none;
+      outline: none;
+      width: 50%;
+      height: 100%;
+      background: transparent;
+      color: black;
+      font-family:'Orbitron', sans-serif;
+    }
+    h1{
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>advanced calculator</h1>
+  <input type="text"readonly="" placeholder="0">
+  <br>
+  <button class="u">AC</button>
+  <button class="u">()</button>
+  <button class="u">%</button>
+  <button class="u">÷</button>
+  <br>
+  <button>7</button>
+  <button>8</button>
+  <button>9</button>
+  <button class="u">×</button>
+  <br>
+  <button>4</button>
+  <button>5</button>
+  <button>6</button>
+  <button class="u">-</button>
+  <br>
+  <button>1</button>
+  <button>2</button>
+  <button>3</button>
+  <button class="u">+</button>
+  <br>
+  <button>0</button>
+  <button class="u">.</button>
+  <button class="u">DEL</button>
+  <button class="p">=</button>
+  <script>
+    // ===== FLOATING BALLS BACKGROUND =====
+const style = document.createElement("style");
+style.innerHTML = `
+  body{
+    overflow:hidden;
+  }
+
+  .ball{
+    position: fixed;
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.5;
+    animation: float linear infinite;
+  }
+
+  @keyframes float{
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-120vh); }
+  }
+`;
+document.head.appendChild(style);
+
+for (let i = 0; i < 30; i++) {
+  const ball = document.createElement("div");
+  ball.className = "ball";
+
+  const size = Math.random() * 60 + 20;
+
+  ball.style.width = size + "px";
+  ball.style.height = size + "px";
+  ball.style.left = Math.random() * window.innerWidth + "px";
+
+  ball.style.background = `hsl(${Math.random() * 360},70%,60%)`;
+
+  ball.style.animationDuration = (Math.random() * 10 + 5) + "s";
+  ball.style.animationDelay = Math.random() * 5 + "s";
+
+  document.body.appendChild(ball);
+}
+
+
+// ===== CALCULATOR LOGIC (NO HISTORY) =====
+const input = document.querySelector("input");
+const buttons = document.querySelectorAll("button");
+
+let expression = "";
+
+function formatExpression(expr) {
+  return expr.replace(/÷/g, "/").replace(/×/g, "*");
+}
+
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const value = btn.innerText;
+
+    if (value === "AC") {
+      expression = "";
+      input.value = "";
+      return;
+    }
+
+    if (value === "DEL") {
+      expression = expression.slice(0, -1);
+      input.value = expression;
+      return;
+    }
+
+    if (value === "=") {
+      try {
+        const result = eval(formatExpression(expression));
+        input.value = result;
+        expression = result.toString();
+      } catch {
+        input.value = "Error";
+        expression = "";
+      }
+      return;
+    }
+
+    const operators = ["+", "-", "×", "÷", "%"];
+    const last = expression.slice(-1);
+
+    if (operators.includes(value) && operators.includes(last)) return;
+
+    if (value === "()") {
+      const open = (expression.match(/\(/g) || []).length;
+      const close = (expression.match(/\)/g) || []).length;
+
+      expression += (open === close) ? "(" : ")";
+      input.value = expression;
+      return;
+    }
+
+    expression += value;
+    input.value = expression;
+  });
+});
+</script>
+</body>
+</html>
